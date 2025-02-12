@@ -10,46 +10,53 @@ import {showMessage} from 'react-native-flash-message';
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 
-const Login = () => {
+const Signup = () => {
   const navigation = useNavigation();
-  const [username, setUsername] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleLogin = () => {
-    if (!username.trim() || !password.trim()) {
+  const handleSignup = () => {
+    if (!name.trim() || !password.trim() || !confirmPassword.trim()) {
       showMessage({
         message: 'Validation Error',
-        description: 'Please fill in both username and password.',
+        description: 'Please fill in all fields.',
+        type: 'warning',
+        icon: 'warning',
+      });
+    } else if (password !== confirmPassword) {
+      showMessage({
+        message: 'Validation Error',
+        description: 'Passwords do not match.',
         type: 'warning',
         icon: 'warning',
       });
     } else {
-      loginUser({username, password});
-      setPassword('');
+      registerUser({name, password}); // Pass name and password as an object
     }
   };
 
-  const loginUser = async userData => {
+  const registerUser = async userData => {
     try {
+      
       const data = {
-        username: userData.username, // Corrected key
+        username: userData.name,
         password: userData.password,
       };
 
-      const API_URL = 'http://192.168.23.83:3300/login';
-      const res = await axios.post(API_URL, data);
-
-      if (res?.data) {
+      const res = await axios.post('http://192.168.23.83:3300/register', data); // Update the URL as needed
+      console.log('ChecktheResponse::KKK',res?.data)
+      if (res.data) {
         showMessage({
-          message: 'Login Successful',
-          description: 'You have been logged in!',
+          message: 'Signup Successful',
+          description: 'Your account has been created!',
           type: 'success',
           icon: 'success',
         });
-        navigation.navigate('Home');
+        navigation.navigate('Login'); // Navigate to the Login screen after successful signup
       } else {
         showMessage({
-          message: 'Login Failed',
+          message: 'Signup Failed',
           description: res.data.message || 'Something went wrong.',
           type: 'danger',
           icon: 'danger',
@@ -58,7 +65,7 @@ const Login = () => {
     } catch (error) {
       console.error(error);
       showMessage({
-        message: 'Login Failed',
+        message: 'Signup Failed',
         description:
           error.response?.data?.message || 'Network error. Please try again.',
         type: 'danger',
@@ -69,10 +76,10 @@ const Login = () => {
 
   return (
     <View style={{backgroundColor: 'white', padding: 20, flex: 1}}>
-      <Text style={{color: 'red', textAlign: 'center'}}>Login Form</Text>
+      <Text style={{color: 'red', textAlign: 'center'}}>Signup Form</Text>
       <View style={{gap: 20, justifyContent: 'center', top: 20}}>
         <TextInput
-          placeholder="Enter your username"
+          placeholder="Enter your name"
           style={{
             color: 'black',
             borderWidth: 0.5,
@@ -81,8 +88,8 @@ const Login = () => {
           }}
           placeholderTextColor={'black'}
           cursorColor={'black'}
-          value={username}
-          onChangeText={setUsername}
+          value={name}
+          onChangeText={setName}
         />
         <TextInput
           placeholder="Enter your password"
@@ -98,6 +105,20 @@ const Login = () => {
           value={password}
           onChangeText={setPassword}
         />
+        <TextInput
+          placeholder="Confirm your password"
+          style={{
+            color: 'black',
+            borderWidth: 0.5,
+            borderRadius: 8,
+            padding: 10,
+          }}
+          placeholderTextColor={'black'}
+          cursorColor={'black'}
+          secureTextEntry={true} // Hide confirm password input
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+        />
         <TouchableOpacity
           style={{
             padding: 14,
@@ -107,16 +128,16 @@ const Login = () => {
             borderRadius: 8,
             backgroundColor: 'red',
           }}
-          onPress={handleLogin}>
-          <Text style={{color: 'white'}}>Login</Text>
+          onPress={handleSignup}>
+          <Text style={{color: 'white'}}>Sign Up</Text>
         </TouchableOpacity>
         <View style={{flexDirection: 'row', justifyContent: 'center', gap: 2}}>
-          <Text style={{color: 'black'}}>Don't have an account?</Text>
+          <Text style={{color: 'black'}}>Already have an account?</Text>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('Signup');
+              navigation.navigate('Login'); // Navigate to the Login screen
             }}>
-            <Text style={{color: 'green'}}>Sign up</Text>
+            <Text style={{color: 'green'}}>Login</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -124,6 +145,6 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;
 
 const styles = StyleSheet.create({});

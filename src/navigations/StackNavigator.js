@@ -7,6 +7,7 @@ import Home from '../Screens/Home';
 import Changepassword from '../Screens/Changepassword';
 import Helpcenter from '../Screens/Helpcenter';
 import Music from '../Screens/Music';
+import Signup from '../Screens/auth/Signup';
 
 const Stack = createStackNavigator();
 
@@ -24,6 +25,11 @@ const StackNavigator = () => {
         options={{headerShown: false}}
       />
       <Stack.Screen
+      name='Signup'
+      component={Signup}
+      options={{headerShown:false}}
+      />
+      <Stack.Screen
         name="Home"
         component={Home}
         options={{headerShown: false}}
@@ -36,7 +42,7 @@ const StackNavigator = () => {
         <Stack.Screen
         name="Music"
         component={Music}
-        // options={{headerShown: false}}
+        options={{headerShown: false}}
       />
     </Stack.Navigator>
   );
